@@ -1,0 +1,605 @@
+#include <mega8.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <delay.h>
+#include <lcd.h>
+#asm
+   .equ __lcd_port=0x18 ;PORTB
+#endasm
+
+
+unsigned char buff[14],counter=0,showlcd[20],flag=0,cardnumber=0,rightflag=0,c=0,counterled=0,usartcounter=0,mainflag=0,i=0;
+eeprom unsigned char card1[14],card2[14],card3[14],card4[14],card5[14],card6[14],card7[14],card8[14],card9[14],card10[14];
+
+
+interrupt [USART_RXC] void usart_rx_isr(void)
+{
+        buff[usartcounter]=UDR;
+        if(usartcounter==13)                 //daryafte 14 byte
+        {
+                mainflag=1;
+                usartcounter=0;
+        }       
+        else if(usartcounter!=13) usartcounter++;
+}
+
+// External Interrupt 0 service routine
+interrupt [EXT_INT0] void ext_int0_isr(void)
+{
+        delay_ms(200);
+        cardnumber++;
+        itoa(cardnumber,showlcd);               //menu for svae or erase
+        if(cardnumber<11)
+        {
+                lcd_clear();
+                lcd_putsf("  Set to save \n    in Slot");
+                delay_ms(500);
+                lcd_clear();
+                lcd_putsf("      #  #");
+                lcd_gotoxy(7,0);
+                lcd_puts(showlcd);
+                delay_ms(500);
+              
+        }
+        else if(cardnumber>=11)
+        {       
+                c=cardnumber-10;
+                itoa(c,showlcd);
+                lcd_clear();
+                lcd_putsf("  Set to clear \n     Slot");
+                delay_ms(500);
+                lcd_clear();
+                lcd_putsf("      #  #");
+                lcd_gotoxy(7,0);
+                lcd_puts(showlcd);
+                delay_ms(500);
+         
+        }
+        if(cardnumber>20)cardnumber=0;
+}
+
+// External Interrupt 1 service routine
+interrupt [EXT_INT1] void ext_int1_isr(void)
+{
+        delay_ms(200);
+        lcd_clear();
+        lcd_putsf("Waiting For Card");
+        for(counter=0;counter<14;counter++)
+        {
+                buff[counter]=getchar();
+        }                                               //menu for saving card or erase it
+        lcd_clear();
+        lcd_putsf("OK");
+        delay_ms(200);
+        switch(cardnumber)
+        {
+            case 1:
+                for(counter=0;counter<14;counter++)
+                {
+                    card1[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 1");
+                    delay_ms(200);
+                   
+                }
+                break;
+            case 2:
+                for(counter=0;counter<14;counter++)
+                {
+                    card2[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 2");
+                    delay_ms(200);
+                }
+                break;
+            case 3:
+                for(counter=0;counter<14;counter++)
+                {
+                    card3[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 3");
+                    delay_ms(200);
+                }
+                break;    
+            case 4:
+                for(counter=0;counter<14;counter++)
+                {
+                    card4[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 4");
+                    delay_ms(200);
+                }
+                break;    
+             case 5:
+                for(counter=0;counter<14;counter++)
+                {
+                    card5[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 5");
+                    delay_ms(200);
+                }
+                break;
+            case 6:
+                for(counter=0;counter<14;counter++)
+                {
+                    card6[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 6");
+                    delay_ms(200);
+                }
+                break;
+            case 7:
+                for(counter=0;counter<14;counter++)
+                {
+                    card7[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 7");
+                    delay_ms(200);
+                }
+                break;    
+            case 8:
+                for(counter=0;counter<14;counter++)
+                {
+                    card8[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 8");
+                    delay_ms(200);
+                }
+                break;        
+             case 9:
+                for(counter=0;counter<14;counter++)
+                {
+                    card9[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 9");
+                    delay_ms(200);
+                }
+                break;
+            case 10:
+                for(counter=0;counter<14;counter++)
+                {
+                    card10[counter]=buff[counter];
+                    lcd_clear();
+                    lcd_putsf("Saved in slot 10");
+                    delay_ms(200);
+                }
+                break;
+            case 11:
+                for(counter=0;counter<14;counter++)
+                {
+                    card1[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 1");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 12:
+                for(counter=0;counter<14;counter++)
+                {
+                    card2[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 2");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 13:
+                for(counter=0;counter<14;counter++)
+                {
+                    card3[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 3");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 14:
+                for(counter=0;counter<14;counter++)
+                {
+                    card4[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 4");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 15:
+                for(counter=0;counter<14;counter++)
+                {
+                    card5[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 5");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 16:
+                for(counter=0;counter<14;counter++)
+                {
+                    card6[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 6");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 17:
+                for(counter=0;counter<14;counter++)
+                {
+                    card7[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 7");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 18:
+                for(counter=0;counter<14;counter++)
+                {
+                    card8[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 8");
+                    delay_ms(200);
+                   
+                }
+                break;                               
+            case 19:
+                for(counter=0;counter<14;counter++)
+                {
+                    card9[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 9");
+                    delay_ms(200);
+                   
+                }
+                break; 
+            case 20:
+                for(counter=0;counter<14;counter++)
+                {
+                    card10[counter]=0;
+                    lcd_clear();
+                    lcd_putsf("cleared slot 20");
+                    delay_ms(200);
+                   
+                }
+                break;  
+        }
+       
+}
+
+
+void main(void)
+{
+
+
+
+PORTB=0x00;
+DDRB=0x00;
+
+PORTC=0x00;
+DDRC=0xff;
+
+
+PORTD=0xff;
+DDRD=0x00;
+
+// External Interrupt(s) initialization
+// INT0: On
+// INT0 Mode: Low level
+// INT1: On
+// INT1 Mode: Low level
+GICR|=0xC0;
+MCUCR=0x00;
+GIFR=0xC0;
+
+// Timer(s)/Counter(s) Interrupt(s) initialization
+TIMSK=0x00;
+
+
+// USART initialization
+// Communication Parameters: 8 Data, 1 Stop, No Parity
+// USART Receiver: On
+// USART Transmitter: Off
+// USART Mode: Asynchronous
+// USART Baud Rate: 9600
+UCSRA=0x00;
+UCSRB=0x90;
+UCSRC=0x86;
+UBRRH=0x00;
+UBRRL=0x33;
+
+
+
+// LCD module initialization
+lcd_init(16);
+
+// Global enable interrupts
+
+#asm("sei")
+while (1)
+      {
+        lcd_clear();
+        lcd_putsf("JLZ");           //intro
+        delay_ms(200);
+        lcd_clear();
+        lcd_putsf("JLZ.");
+        delay_ms(200);
+        lcd_clear();
+        lcd_putsf("JLZ..");
+        delay_ms(200);
+        lcd_clear();
+        lcd_putsf("JLZ...");
+        delay_ms(200);
+        lcd_clear();
+        for(counter=0;counter<14;counter++)
+        {
+            buff[counter]=0;
+        }
+        
+        while(mainflag==0)
+        {
+                
+                
+                lcd_putsf("Pass Your Card\n>");              //wait for card
+                delay_ms(50);
+                lcd_clear();
+                lcd_putsf("Pass Your Card\n>>");
+                delay_ms(50);
+                lcd_clear();
+                lcd_putsf("Pass Your Card\n>>>");
+                delay_ms(50);
+                lcd_clear();
+                for(i=0;i<16;i++)
+                {
+                        lcd_putsf("Pass Your Card");
+                        lcd_gotoxy(i,1);
+                        lcd_putsf(">>>>");
+                        delay_ms(50);
+                        lcd_clear();
+                        
+                }
+                lcd_putsf("Pass Your Card\n               <"); 
+                delay_ms(50);
+                
+                for(i=16;i>0;i--)
+                {
+                        lcd_putsf("Pass Your Card");
+                        lcd_gotoxy(i,1);
+                        lcd_putsf("<<<<");
+                        delay_ms(50);
+                        lcd_clear();
+                        
+                }
+                lcd_putsf("Pass Your Card\n<<<"); 
+                delay_ms(50);
+                lcd_clear();       
+                lcd_putsf("Pass Your Card\n<<"); 
+                delay_ms(50);
+                lcd_clear();
+                lcd_putsf("Pass Your Card\n<"); 
+                delay_ms(50);
+                lcd_clear();
+                
+        }
+      
+        mainflag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card1[counter]) flag++;
+        }
+        if(flag==14)
+        
+        {
+        lcd_clear();
+        lcd_putsf("card1");
+        PORTC.2=1;                                    //relay connecting
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;                   //green led
+                delay_ms(400);
+        }
+        PORTC.2=0;                            //relay disconnecting
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)      //check kardan 14 byte card 2
+        {
+            if(buff[counter]==card2[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card2");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card3[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card3");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card4[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card4");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card5[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card5");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card6[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card6");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card7[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card7");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card8[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card8");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card9[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card9");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        for(counter=0;counter<14;counter++)
+        {
+            if(buff[counter]==card8[counter])flag++;
+        }
+        if(flag==14)
+        {
+        lcd_clear();
+        lcd_putsf("card10");
+        PORTC.2=1;
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.5=~PORTC.5;
+                delay_ms(400);
+        }
+        PORTC.2=0;
+        PORTC.5=0;
+        rightflag=1;
+        }
+        flag=0;
+        
+        
+        if(rightflag==0)
+        {
+        lcd_clear();
+        lcd_putsf("  Do not Match");
+        for(counterled=0;counterled<10;counterled++)
+        {
+                PORTC.4=~PORTC.4;
+                delay_ms(100);
+        }
+        lcd_clear();
+        lcd_putsf(" But The Card\n   id is >>");
+        for(counterled=0;counterled<5;counterled++)
+        {
+                PORTC.4=~PORTC.4;
+                delay_ms(100);
+        }
+        lcd_clear();
+        lcd_puts(buff);            //display card id
+        delay_ms(1000);
+        PORTC.4=0;
+        }
+        
+        
+      rightflag=0;        
+      };
+}
