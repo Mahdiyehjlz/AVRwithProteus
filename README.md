@@ -9,15 +9,15 @@
 
 ### Files Included
 - `ATmega8Codevision` - Main C source code
-- `project_name.hex` - Compiled firmware
-- `circuit.DSN` - Proteus schematic
+- `RFID.hex` - Compiled firmware
+- `RFID.DSN` - Proteus schematic
 
 ## Running the Project
 
 ### Option 1: Proteus Simulation
 1. **Open Proteus**
    - Launch Proteus ISIS
-   - Open `circuit.DSN` file
+   - Open `RFID.DSN` file
 
 2. **Load HEX File**
    - Double-click ATmega8 microcontroller
@@ -34,10 +34,10 @@
 1. **Program ATmega8**
    - Connect AVR programmer (USBasp/ArduinoISP)
    - Use AVRDUDE or CodeVisionAVR to flash `.hex` file
-   - Command: `avrdude -c usbasp -p m8 -U flash:w:project_name.hex:i`
+   - Command: `avrdude -c usbasp -p m8 -U flash:w:RFID.hex:i`
 
 2. **Build Circuit**
-   - Follow schematic in `circuit.DSN`
+   - Follow schematic in `RFID.DSN`
    - Connect RFID reader to USART pins
    - Connect LCD, LEDs, buzzer, relay as per pinout
    - Provide 12V power supply
