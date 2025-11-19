@@ -28,7 +28,7 @@ interrupt [EXT_INT0] void ext_int0_isr(void)
 {
         delay_ms(200);
         cardnumber++;
-        itoa(cardnumber,showlcd);               //menu for svae or erase
+        itoa(cardnumber,showlcd);               //menu for save or erase
         if(cardnumber<11)
         {
                 lcd_clear();
