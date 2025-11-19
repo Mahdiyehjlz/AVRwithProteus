@@ -8,7 +8,7 @@
 - **AVR Programmer** (for hardware deployment)
 
 ### Files Included
-- `project_name.c` - Main C source code
+- `ATmega8Codevision` - Main C source code
 - `project_name.hex` - Compiled firmware
 - `circuit.DSN` - Proteus schematic
 
