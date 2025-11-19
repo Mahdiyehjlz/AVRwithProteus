@@ -1,4 +1,4 @@
-# RFID Access Control System - Technical Summary
+# RFID Access Control System
 
 ## Quick Start Guide
 
